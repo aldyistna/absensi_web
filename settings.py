@@ -1,6 +1,6 @@
-SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:12345@127.0.0.1:5432/db_absensi'
-# SQLALCHEMY_DATABASE_URI = 'postgresql://zgylmfiuonofiy' \
-#                           ':adaba633fae68a5fe994312aa1a36a4320c684619560734d08f9feaee52fd7ec@' \
-#                           'ec2-3-224-97-209.compute-1.amazonaws.com:5432/da725ctd8l0p2f'
+# SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:12345@127.0.0.1:5432/db_absensi'
+SQLALCHEMY_DATABASE_URI = 'postgresql://fhbehzymylyjjg' \
+                          ':e85fcc4162f15b660f632ac5e9b43d70abd7442ddb993f5ae07f8aaa39bc5a30@' \
+                          'ec2-54-236-137-173.compute-1.amazonaws.com:5432/d4p0adqt357310'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 BUNDLE_ERRORS = True
