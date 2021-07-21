@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Create a New Post {% endblock %}</h1>
+
+    {% for x in absen %}
+        <p>{{ x['nik'] }}</p>
+        <p>{{ x['name'] }}</p>
+        <p>{{ x['date_in'] }}</p>
+        <p>{{ x['time_in'] }}</p>
+    {% endfor %}
+{% endblock %}
