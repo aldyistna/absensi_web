@@ -9,7 +9,7 @@ from absensi.resource.absen import get_absen, get_rekap, AbsenResource
 main = Blueprint('main', __name__)
 
 
-api.add_resource(AbsenResource, '/absens', '/absens/<int:id>')
+api.add_resource(AbsenResource, '/api/absens', '/api/absens/<int:id>')
 
 
 @app.route('/absen')
