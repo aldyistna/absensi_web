@@ -6,20 +6,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{#    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">#}
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+      <style>
+        .table td, .table th {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .table thead th {
+            text-align: center;
+        }
+        .custom-td {
+             width: 200px;
+             max-width: 200px;
+             overflow: hidden;
+             text-overflow: ellipsis;
+             white-space: nowrap;
+        }
+        .field:not(:last-child) {
+            margin: 1rem 0 .75rem;
+        }
+      </style>
 
     <title>{% block title %} {% endblock %}</title>
   </head>
   <body>
-      <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="#">Absensi</a>
-      </nav>
-    <div class="container">
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-danger">{{ message }}</div>
-        {% endfor %}
-        {% block content %} {% endblock %}
-    </div>
+      <section class="hero is-fullheight" style="background-color: #d0dfec">
+        <div class="hero-head">
+            <nav class="navbar" style="background-color: #a8ccec">
+                <div class="container">
+                    <a class="navbar-brand" href="{{ url_for('absen') }}" style="justify-content: center; align-items: center;">Absensi</a>
+                    <div id="navbarMenuHeroA" class="navbar-menu">
+                        <div class="navbar-end">
+                            {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('logout') }}" class="navbar-item">
+                                Logout
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+     {% block content %} {% endblock %}
+
+
+     </section>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

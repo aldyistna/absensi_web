@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="hero-body" style="align-items: flex-start">
+        <div class="container">
+            <div class="column is-three-fifths is-offset-one-fifth">
+                <div class="box">
+                    <h1 style="display:none;">{% block title %} Rekap Data Absen {% endblock %}</h1>
+                    <a href="{{ url_for('absen') }}">
+                        <button class="button is-info">Kembali</button>
+                    </a>
+                    <div style="margin:10px 0;display: flex; align-items: center; justify-content: center">
+                        <table class="table is-bordered is-striped">
+                            <thead>
+                                <tr>
+                                    <th colspan="10">Rekap Data Absensi</th>
+                                </tr>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>NIK</th>
+                                    <th>Nama</th>
+                                    <th>Total Absen Masuk</th>
+                                    <th>Total Absen Pulang</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for x in rekap %}
+                                    <tr>
+                                        <td>{{ x['rownum'] }}</td>
+                                        <td>{{ x['nik'] }}</td>
+                                        <td>{{ x['name'] }}</td>
+                                        <td>{{ x['total_absen_masuk'] }}</td>
+                                        <td>{{ x['total_absen_pulang'] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

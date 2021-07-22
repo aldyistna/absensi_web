@@ -1,12 +1,66 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Create a New Post {% endblock %}</h1>
+    <div class="hero-body" style="align-items: flex-start">
+        <div class="container">
+            <h1 style="display:none;">{% block title %} Absensi Karyawan {% endblock %}</h1>
+            <div>
+                <div class="box" >
+                    <div class="column is-2 is-offset-10">
+                        <a href="{{ url_for('rekap') }}">
+                            <button class="button is-info">Rekap Data Absen</button>
+                        </a>
+                    </div>
+                    <div style="margin:10px 0;display: flex; align-items: center; justify-content: center">
+                        <table class="table is-bordered is-striped">
+                            <thead>
+                              <tr>
+                                  <th colspan="10">Data Absensi</th>
+                              </tr>
+                              <tr>
+                                <th>No.</th>
+                                <th>Tanggal</th>
+                                <th>NIK</th>
+                                <th>Nama</th>
+                                <th>Jam Masuk</th>
+                                <th>Foto Masuk</th>
+                                <th>Lokasi Masuk</th>
+                                <th>Jam Pulang</th>
+                                <th>Foto Pulang</th>
+                                <th>Lokasi Pulang</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for x in absen %}
+                                  <tr>
+                                    <td>{{ x['rownum'] }}</td>
+                                    <td>{{ x['date_in'] }}</td>
+                                    <td>{{ x['nik'] }}</td>
+                                    <td title="{{ x['name'] }}">{{ x['name'] }}</td>
+                                    <td>{{ x['time_in'] }}</td>
+                                    <td>
+                                        <img src="{{ x['url_photo_in'] }}" alt="{{ x['name'] }}" style="width:60px;height:60px;">
+                                    </td>
+                                    <td title="{{ x['location_in'] }}" class="custom-td">{{ x['location_in'] }}</td>
+                                    <td>{{ x['time_out'] }}</td>
+                                    <td>
+                                        {% if x['url_photo_out'] %}
+                                            <img src="{{ x['url_photo_out'] }}" alt="{{ x['name'] }}" style="width:60px;height:60px;">
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td title="{{ x['location_out'] }}" class="custom-td">{{ x['location_out'] }}</td>
+                                  </tr>
+                                  {% endfor %}
+                            </tbody>
 
-    {% for x in absen %}
-        <p>{{ x['nik'] }}</p>
-        <p>{{ x['name'] }}</p>
-        <p>{{ x['date_in'] }}</p>
-        <p>{{ x['time_in'] }}</p>
-    {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}

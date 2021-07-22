@@ -6,6 +6,7 @@ Click==7.0
 Flask==1.1.1
 Flask-Caching==1.8.0
 Flask-Cors==3.0.8
+flask-login==0.5.0
 flask-marshmallow==0.10.1
 Flask-Mobility==0.1.1
 Flask-RESTful==0.3.7

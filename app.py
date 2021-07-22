@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.exceptions import HTTPException
@@ -10,10 +10,13 @@ from logging.handlers import RotatingFileHandler
 from flask_cors import CORS
 from flask import request
 from flask import jsonify
+from flask_login import LoginManager, UserMixin
 
 import firebase_admin
 from firebase_admin import credentials
-from firebase_admin import storage, exceptions
+from firebase_admin import storage
+
+# from absensi.model.model import Karyawan
 
 import settings
 UPLOAD_FOLDER = 'static/uploaded/'
@@ -39,21 +42,37 @@ app.config['BUNDLE_ERRORS'] = settings.BUNDLE_ERRORS
 app.config["JSON_SORT_KEYS"] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['PICTURE_FOLDER'] = PICTURE_FOLDER
+app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
 
 db = SQLAlchemy(app)
 db.reflect()
 ma = Marshmallow(app)
 
 api = Api(app)
-api.prefix = '/ta'
+api.prefix = ''
 
 cred = credentials.Certificate(app.root_path + "/credential.json")
 bucket = firebase_admin.initialize_app(cred, {
-    'storageBucket': 'project-ta-7310e.appspot.com',
+    'storageBucket': 'absensi-2b565.appspot.com',
 }, name='storage')
 bucket_app = storage.bucket(app=bucket)
 
+login_manager = LoginManager()
+login_manager.login_view = 'loginresource'
+login_manager.init_app(app)
 
+@login_manager.user_loader
+def load_user(user_id):
+    # since the user_id is just the primary key of our user table, use it in the query for the user
+    return Karyawan.query.get(int(user_id))
+
+# blueprint for auth routes in our app
+from absensi.router.auth import auth as auth_blueprint
+app.register_blueprint(auth_blueprint)
+
+# blueprint for non-auth parts of app
+from absensi.router.route import main as main_blueprint
+app.register_blueprint(main_blueprint)
 from absensi.router import *
 
 
@@ -61,16 +80,7 @@ from absensi.router import *
 def hello_world():
     app.logger.debug('Recommendation API is up')
     app.logger.info('Info')
-    return jsonify(api='Recommendation API',
-                   ver=1.0)
-
-
-@app.route('/ta/')
-def ta_test():
-    app.logger.debug('Recommendation API is up')
-    app.logger.info('Info')
-    return jsonify(api='Recommendation API',
-                   ver=1.0)
+    return redirect(url_for('absen'))
 
 
 @app.route('/get-ip')
@@ -79,7 +89,32 @@ def get_my_ip():
 
 
 if __name__ == '__main__':
-    handler = RotatingFileHandler('kkp.log', maxBytes=100000000, backupCount=1)
+    handler = RotatingFileHandler('absen.log', maxBytes=100000000, backupCount=1)
     handler.setLevel(logging.INFO)
     app.logger.addHandler(handler)
     app.run(use_reloader=False)
+
+
+class Karyawan(UserMixin, db.Model):
+    __tabelname__ = 'karyawan'
+    __table_args__ = {'extend_existing': True}
+    # absen = db.relationship("Absen", uselist=False, back_populates="karyawan")
+
+
+class Absen(db.Model):
+    __tabelname__ = 'absen'
+    __table_args__ = {'extend_existing': True}
+    # nik = db.column(db.Integer, db.ForeignKey("karyawan.nik"))
+    # karyawan = db.relationship("Karyawan", back_populates="absen")
+
+
+class KaryawanSchema(ma.ModelSchema):
+    class Meta:
+        model = Karyawan
+
+
+class AbsenSchema(ma.ModelSchema):
+    # karyawan = ma.Nested(KaryawanSchema, many=False)
+
+    class Meta:
+        model = Absen
