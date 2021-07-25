@@ -52,7 +52,7 @@ def get_rekap(request, db):
 class AbsenResource(Resource):
     decorators = []
 
-    def post(self):
+    def post(self, id=None):
         data = parser.parse_args()
         date_name = calendar.timegm(time.gmtime())
         if data['file'] == "":
@@ -67,8 +67,8 @@ class AbsenResource(Resource):
         image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         isnew = False
-        if data['id']:
-            absen = Absen.query.filter_by(id=data['id']).first()
+        if id:
+            absen = Absen.query.filter_by(id=id).first()
             absen.location_out = data['location']
             absen.time_out = datetime.now()
             absen.url_photo_out = upload_file('absen_out/' + filename, os.path.join(app.config['UPLOAD_FOLDER'], filename))

@@ -20,12 +20,12 @@ class LoginResource(Resource):
         password = data['password']
         login = data['login']
 
-        if isinstance(nik, int):
-            karyawan = Karyawan.query.filter(Karyawan.nik == nik) \
+        if login == 'WEB':
+            karyawan = Karyawan.query.filter(Karyawan.username == nik) \
                 .filter(Karyawan.password == password) \
                 .filter(Karyawan.login == login).first()
         else:
-            karyawan = Karyawan.query.filter(Karyawan.username == nik) \
+            karyawan = Karyawan.query.filter(Karyawan.nik == nik) \
                 .filter(Karyawan.password == password) \
                 .filter(Karyawan.login == login).first()
 
