@@ -15,6 +15,7 @@ parser = reqparse.RequestParser()
 parser.add_argument('nik', required=True, help='nik parameter is required')
 parser.add_argument('id', required=False, help='nik parameter is required')
 parser.add_argument('location', required=True, help='location parameter is required')
+parser.add_argument('date', required=True, help='date parameter is required')
 parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files', required=True)
 
 def get_absen(request, db):
@@ -70,14 +71,14 @@ class AbsenResource(Resource):
         if id:
             absen = Absen.query.filter_by(id=id).first()
             absen.location_out = data['location']
-            absen.time_out = datetime.now()
+            absen.time_out = data['date']
             absen.url_photo_out = upload_file('absen_out/' + filename, os.path.join(app.config['UPLOAD_FOLDER'], filename))
         else:
             absen = Absen()
             isnew = True
             absen.nik = data['nik']
             absen.location_in = data['location']
-            absen.time_in = datetime.now()
+            absen.time_in = data['date']
             absen.url_photo_in = upload_file('absen_in/' + filename, os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         if isnew:
