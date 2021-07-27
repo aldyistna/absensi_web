@@ -83,6 +83,14 @@ def hello_world():
     return redirect(url_for('absen'))
 
 
+@app.route('/api')
+def up_api():
+    app.logger.debug('API is up')
+    app.logger.info('Info')
+    return jsonify(api='Apk Uploader',
+                   ver=1.0)
+
+
 @app.route('/get-ip')
 def get_my_ip():
     return jsonify({'ip': request.remote_addr}), 200
