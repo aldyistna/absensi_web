@@ -41,7 +41,7 @@ def get_rekap(request, db):
                " count(b.time_out) as total_absen_pulang"
                " FROM karyawan a "
                " LEFT JOIN absen b on a.nik = b.nik "
-               " WHERE a.nik <> 9999999 "
+               " WHERE a.login <> 'WEB' "
                " GROUP BY a.nik, a.name "
                " ORDER BY name ")
 
