@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="hero-body" style="align-items: flex-start">
+        <div class="container">
+            <div>
+                <div class="box">
+                    <h1 style="display: flex;margin-bottom: .75rem;font-size: 28px;font-weight: 800;align-items: center;justify-content: center;">{% block title %} Add Karyawan {% endblock %}</h1>
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="notification is-danger">
+                            <button class="delete" onclick="this.parentElement.style.display='none'"></button>
+                            {{ messages[0] }}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+                    <form method="POST" action="/save_karyawan" style="padding-right: 125px">
+
+                        <div class="field is-horizontal">
+                          <div class="field-label is-normal">
+                            <label class="label">NIK:</label>
+                          </div>
+                          <div class="field-body">
+                            <div class="field">
+                              <div class="control">
+                                <input class="input" name="nik" type="text" placeholder="NIK" required>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="field is-horizontal">
+                          <div class="field-label is-normal">
+                            <label class="label">Nama:</label>
+                          </div>
+                          <div class="field-body">
+                            <div class="field">
+                              <div class="control">
+                                <input class="input" name="name" type="text" placeholder="Nama" required>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="field is-horizontal">
+                          <div class="field-label is-normal">
+                            <label class="label">Jabatan:</label>
+                          </div>
+                          <div class="field-body">
+                            <div class="field">
+                              <div class="control">
+                                <input class="input" name="jabatan" type="text" placeholder="Jabatan" required>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="field is-horizontal">
+                          <div class="field-label is-normal">
+                            <label class="label">Username:</label>
+                          </div>
+                          <div class="field-body">
+                            <div class="field">
+                              <div class="control">
+                                <input class="input" name="username" type="text" placeholder="Username" required>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="field is-horizontal">
+                          <div class="field-label is-normal">
+                            <label class="label">Password:</label>
+                          </div>
+                          <div class="field-body">
+                            <div class="field">
+                              <div class="control">
+                                <input class="input" type="password" name="password" placeholder="Password" required>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {#<div class="field">
+                            <div class="control">
+                                <input class="input is-medium is-link" type="text" name="nik" placeholder="Your Username" autofocus="">
+                            </div>
+                        </div>#}
+
+                        {#<div class="field">
+                            <div class="control">
+                                <input class="input is-medium is-link" type="password" name="password" placeholder="Your Password">
+                            </div>
+                        </div>#}
+
+                        <div class="field is-grouped is-grouped-right">
+                          <p class="control">
+                            <button type="submit" class="button is-primary is-rounded">
+                              Save
+                            </button>
+                          </p>
+                          <p class="control">
+                            <a class="button is-light is-rounded" href="{{ url_for('absen') }}">
+                              Cancel
+                            </a>
+                          </p>
+                        </div>
+{#                        <button class="button is-rounded is-medium is-info is-fullwidth">Login</button>#}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

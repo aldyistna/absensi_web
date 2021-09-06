@@ -39,9 +39,14 @@
                     <div id="navbarMenuHeroA" class="navbar-menu">
                         <div class="navbar-end">
                             {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('logout') }}" class="navbar-item">
-                                Logout
-                            </a>
+                                {% if request.endpoint == 'absen'  %}
+                                    <a href="{{ url_for('add_karyawan') }}" class="navbar-item">
+                                        Add Karyawan
+                                    </a>
+                                {% endif %}
+                                <a href="{{ url_for('logout') }}" class="navbar-item">
+                                    Logout
+                                </a>
                             {% endif %}
                         </div>
                     </div>
