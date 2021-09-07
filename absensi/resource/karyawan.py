@@ -1,11 +1,12 @@
-from flask import render_template, make_response, flash, redirect, url_for
+from flask import flash, redirect, url_for
 from flask_restful import Resource, reqparse
-from flask_login import login_user
+from sqlalchemy import text
 
-from absensi.model.model import Karyawan
+from absensi.model.model import Karyawan, KaryawanSchema
 from app import db
 
 parser = reqparse.RequestParser()
+parser.add_argument('id', required=False, help='nik parameter is required')
 parser.add_argument('nik', required=True, help='nik parameter is required')
 parser.add_argument('name', required=True, help='nik parameter is required')
 parser.add_argument('jabatan', required=True, help='nik parameter is required')
@@ -18,17 +19,6 @@ class KaryawanResource(Resource):
 
     def post(self):
         data = parser.parse_args()
-        print(data)
-
-        nik_check = Karyawan.query.filter_by(nik=data['nik']).first()
-        if nik_check:
-            flash('NIK sudah digunakan !')
-            return redirect(url_for('add_karyawan'))
-
-        uname_check = Karyawan.query.filter_by(username=data['username']).first()
-        if uname_check:
-            flash('Username sudah digunakan !')
-            return redirect(url_for('add_karyawan'))
 
         karyawan = Karyawan()
 
@@ -40,5 +30,41 @@ class KaryawanResource(Resource):
         karyawan.login = "MOBILE"
 
         db.session.add(karyawan)
+
         db.session.commit()
-        return redirect(url_for('absen'))
+        return redirect(url_for('karyawan'))
+
+    def delete(self, id=None):
+        install = Karyawan.query.get(id)
+
+        db.session.delete(install)
+        db.session.commit()
+        return {
+            'data': '',
+            'message': 'Success',
+            'status': 'Success'
+        }
+
+
+def get_karyawan(request, db, id=None):
+    if id:
+        kar_schema = KaryawanSchema()
+        kar = Karyawan.query.filter_by(id=id, login='MOBILE').first()
+        return kar_schema.dump(kar).data
+
+    filter_where = request.args.get('filter')
+    where = ''
+    if filter_where:
+        where = 'and nik ilike \'%' + filter_where + '%\' or name ilike \'%' \
+                + filter_where + '%\' or jabatan ilike \'%' \
+                + filter_where + '%\' or username ilike \'%' + filter_where + '%\''
+
+    sql = text(" SELECT row_number() over (order by id) as rownum, * "
+               " FROM karyawan "
+               " WHERE login <> 'WEB'"
+               + where +
+               " ORDER BY id ")
+
+    result = db.engine.execute(sql)
+
+    return result

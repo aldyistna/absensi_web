@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="hero-body" style="align-items: flex-start">
+        <div class="container">
+            <h1 style="display:none;">{% block title %} Karyawan {% endblock %}</h1>
+            <div>
+                <div class="box" style="min-height: 400px">
+                    <div class="column is-2 is-offset-10">
+                        <a href="{{ url_for('form_karyawan') }}">
+                            <button class="button is-info">Add Karyawan</button>
+                        </a>
+                    </div>
+                    <div style="margin:10px 0;display: flex; align-items: center; justify-content: center">
+                        <table class="table is-bordered is-striped">
+                            <thead>
+                              <tr>
+                                  <th colspan="10">Data Karyawan</th>
+                              </tr>
+                              <tr>
+                                <th>No.</th>
+                                <th>NIK</th>
+                                <th>Nama</th>
+                                <th>Jabatan</th>
+                                <th>Username</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for x in kar %}
+                                  <tr>
+                                    <td>{{ x['rownum'] }}</td>
+                                    <td>{{ x['nik'] }}</td>
+                                    <td title="{{ x['name'] }}">{{ x['name'] }}</td>
+                                    <td>{{ x['jabatan'] }}</td>
+                                    <td>{{ x['username'] }}</td>
+                                    <td>
+                                        <a href="form_karyawan/{{ x['id'] }}" class="button is-info is-rounded is-small">
+                                          Update
+                                        </a>
+                                        <button class="button is-danger is-rounded is-small" onclick="deleteKaryawan(event, {{ x['id'] }})">
+                                          Delete
+                                        </button>
+                                    </td>
+                                  </tr>
+                                  {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
