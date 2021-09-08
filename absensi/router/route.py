@@ -78,7 +78,6 @@ def form_karyawan(id=None):
         if kar == {}:
             flash('id tidak ditemukan')
             return redirect(url_for('form_karyawan'))
-    print(kar)
     return render_template('add_karyawan.html', id=id, kar=kar)
 
 
