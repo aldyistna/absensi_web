@@ -15,7 +15,7 @@
                         </div>
                     {% endif %}
                     {% endwith %}
-                    <form method="POST" action="/save_karyawan" style="padding-right: 125px">
+                    <form method="POST" style="padding-right: 125px">
 
                         <div class="field is-horizontal">
                           <div class="field-label is-normal">
@@ -24,11 +24,15 @@
                           <div class="field-body">
                             <div class="field">
                               <div class="control">
-                                <input class="input" name="nik" type="text" placeholder="NIK" required>
+                                <input class="input" name="nik" type="number" placeholder="NIK" value="{{ kar.nik }}" required>
                               </div>
                             </div>
                           </div>
                         </div>
+
+                        {% if kar.id %}
+                            <input class="input"  name="id" type="hidden" placeholder="NIK" value="{{ kar.id }}" required>
+                        {% endif %}
 
                         <div class="field is-horizontal">
                           <div class="field-label is-normal">
@@ -37,7 +41,7 @@
                           <div class="field-body">
                             <div class="field">
                               <div class="control">
-                                <input class="input" name="name" type="text" placeholder="Nama" required>
+                                <input class="input" name="name" type="text" placeholder="Nama" value="{{ kar.name }}" required>
                               </div>
                             </div>
                           </div>
@@ -50,7 +54,7 @@
                           <div class="field-body">
                             <div class="field">
                               <div class="control">
-                                <input class="input" name="jabatan" type="text" placeholder="Jabatan" required>
+                                <input class="input" name="jabatan" type="text" placeholder="Jabatan" value="{{ kar.jabatan }}" required>
                               </div>
                             </div>
                           </div>
@@ -63,7 +67,7 @@
                           <div class="field-body">
                             <div class="field">
                               <div class="control">
-                                <input class="input" name="username" type="text" placeholder="Username" required>
+                                <input class="input" name="username" type="text" placeholder="Username" value="{{ kar.username }}" required>
                               </div>
                             </div>
                           </div>
@@ -76,23 +80,11 @@
                           <div class="field-body">
                             <div class="field">
                               <div class="control">
-                                <input class="input" type="password" name="password" placeholder="Password" required>
+                                <input class="input" type="password" name="password" placeholder="Password" value="{{ kar.password }}" required>
                               </div>
                             </div>
                           </div>
                         </div>
-
-                        {#<div class="field">
-                            <div class="control">
-                                <input class="input is-medium is-link" type="text" name="nik" placeholder="Your Username" autofocus="">
-                            </div>
-                        </div>#}
-
-                        {#<div class="field">
-                            <div class="control">
-                                <input class="input is-medium is-link" type="password" name="password" placeholder="Your Password">
-                            </div>
-                        </div>#}
 
                         <div class="field is-grouped is-grouped-right">
                           <p class="control">
@@ -101,12 +93,11 @@
                             </button>
                           </p>
                           <p class="control">
-                            <a class="button is-light is-rounded" href="{{ url_for('absen') }}">
+                            <a class="button is-light is-rounded" href="{{ url_for('karyawan') }}">
                               Cancel
                             </a>
                           </p>
                         </div>
-{#                        <button class="button is-rounded is-medium is-info is-fullwidth">Login</button>#}
                     </form>
                 </div>
             </div>
