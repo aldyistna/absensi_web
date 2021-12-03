@@ -5,15 +5,30 @@
         <div class="container">
             <div class="column is-three-fifths is-offset-one-fifth">
                 <div class="box" style="min-height: 400px">
-                    <h1 style="display:none;">{% block title %} Rekap Data Absen {% endblock %}</h1>
-                    <a href="{{ url_for('absen') }}">
-                        <button class="button is-info">Kembali</button>
-                    </a>
+                    <h1 style="display:none;">{% block title %} Rekap Data Absen {{ month }}{% endblock %}</h1>
+                    <div style="display: flex; justify-content: space-between">
+                        <a href="{{ url_for('absen') }}">
+                            <button class="button is-info">Kembali</button>
+                        </a>
+                        <div>
+                            {% if month != 'Bulan Ini' %}
+                            <button class="button is-info is-outlined" style="margin-right: 1rem;border-radius: 50px" onclick="resetMonth(event)">Reset</button>
+                            {% endif %}
+                            <label style="padding-right: 10px">
+                                <select name="comp_select" onchange="changeMonth(event, value)" class="select" style="padding: 4px 14px;outline: #209cee auto;border-radius: 50px;font-size: 1rem;">
+                                    <option value="" disabled {% if month == 'Bulan Ini' %} selected {% endif %} style="display: none">Pilih Bulan</option>
+                                    {% for x in months %}
+                                    <option value="{{ x }}" {% if month == months[x] %} selected {% endif %}>{{ months[x] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                    </div>
                     <div style="margin:10px 0;display: flex; align-items: center; justify-content: center">
                         <table class="table is-bordered is-striped">
                             <thead>
                                 <tr>
-                                    <th colspan="10">Rekap Data Absensi</th>
+                                    <th colspan="10">Rekap Data Absensi {{ month }}</th>
                                 </tr>
                                 <tr>
                                     <th>No.</th>

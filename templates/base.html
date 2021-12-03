@@ -83,6 +83,14 @@
               }) :
             null;
         }
+        function changeMonth(event, id) {
+            event.preventDefault()
+            window.location.replace('/rekap?month=' + id);
+        }
+        function resetMonth(event) {
+            event.preventDefault()
+            window.location.replace('/rekap');
+        }
     </script>
 </html>
 

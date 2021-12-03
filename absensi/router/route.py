@@ -26,8 +26,25 @@ def absen():
 @app.route('/rekap')
 @login_required
 def rekap():
+    month_str = {
+        "1": "Bulan Januari",
+        "2": "Bulan Februari",
+        "3": "Bulan Maret",
+        "4": "Bulan April",
+        "5": "Bulan Mei",
+        "6": "Bulan Juni",
+        "7": "Bulan Juli",
+        "8": "Bulan Agustus",
+        "9": "Bulan September",
+        "10": "Bulan Oktober",
+        "11": "Bulan November",
+        "12": "Bulan Desember",
+        "all": "Keseluruhan"
+    }
     rekaps = get_rekap(request, db)
-    return render_template('rekap.html', rekap=rekaps)
+    # month = "Bulan Ini"
+    month = month_str.get(request.args.get('month'), "Bulan Ini")
+    return render_template('rekap.html', rekap=rekaps['data'], month=month, months=month_str)
 
 
 @app.route('/form_karyawan', methods=["POST", "GET"])

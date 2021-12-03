@@ -35,19 +35,31 @@ def get_absen(request, db):
     return result
 
 
-def get_rekap(request, db):
+def get_rekap(requests, dbs):
+    sql_where = " AND EXTRACT(Month from time_in) = EXTRACT(MONTH from now()) "
+
+    month = requests.args.get('month')
+    if month:
+        sql_where = " AND EXTRACT(Month from time_in) = " + month
+        if month == 'all':
+            sql_where = ''
+
     sql = text(" SELECT row_number() over (order by name) as rownum, "
                " a.nik, a.name, count(b.time_in) as total_absen_masuk, "
                " count(b.time_out) as total_absen_pulang"
                " FROM karyawan a "
                " LEFT JOIN absen b on a.nik = b.nik "
                " WHERE a.login <> 'WEB' "
+               + sql_where +
                " GROUP BY a.nik, a.name "
                " ORDER BY name ")
 
-    result = db.engine.execute(sql)
+    result = dbs.engine.execute(sql)
 
-    return result
+    # return result
+    return {
+        'data': [dict(row) for row in result]
+    }
 
 
 class AbsenResource(Resource):
