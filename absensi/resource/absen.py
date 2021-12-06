@@ -38,19 +38,20 @@ def get_absen(request, db):
 def get_rekap(requests, dbs):
     sql_where = " AND EXTRACT(Month from time_in) = EXTRACT(MONTH from now()) "
 
-    month = requests.args.get('month')
-    if month:
-        sql_where = " AND EXTRACT(Month from time_in) = " + month
-        if month == 'all':
+    fil = requests.args.get('filter')
+    if fil:
+        if fil == 'all':
             sql_where = ''
+        else:
+            ym = fil.split("-")
+            sql_where = " AND EXTRACT(YEAR from time_in) = " + ym[0] + " AND EXTRACT(MONTH from time_in) = " + ym[1]
 
     sql = text(" SELECT row_number() over (order by name) as rownum, "
                " a.nik, a.name, count(b.time_in) as total_absen_masuk, "
                " count(b.time_out) as total_absen_pulang"
                " FROM karyawan a "
-               " LEFT JOIN absen b on a.nik = b.nik "
+               " LEFT JOIN absen b on a.nik = b.nik " + sql_where +
                " WHERE a.login <> 'WEB' "
-               + sql_where +
                " GROUP BY a.nik, a.name "
                " ORDER BY name ")
 

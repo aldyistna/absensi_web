@@ -2,6 +2,7 @@ from app import api, app, db
 from flask import render_template, Blueprint, flash, redirect, url_for
 from flask import request
 from flask_login import login_required
+from datetime import datetime
 
 from absensi.resource.absen import get_absen, get_rekap, AbsenResource
 from absensi.resource.karyawan import KaryawanResource, get_karyawan
@@ -27,24 +28,44 @@ def absen():
 @login_required
 def rekap():
     month_str = {
-        "1": "Bulan Januari",
-        "2": "Bulan Februari",
-        "3": "Bulan Maret",
-        "4": "Bulan April",
-        "5": "Bulan Mei",
-        "6": "Bulan Juni",
-        "7": "Bulan Juli",
-        "8": "Bulan Agustus",
-        "9": "Bulan September",
+        "01": "Bulan Januari",
+        "02": "Bulan Februari",
+        "03": "Bulan Maret",
+        "04": "Bulan April",
+        "05": "Bulan Mei",
+        "06": "Bulan Juni",
+        "07": "Bulan Juli",
+        "08": "Bulan Agustus",
+        "09": "Bulan September",
         "10": "Bulan Oktober",
         "11": "Bulan November",
         "12": "Bulan Desember",
         "all": "Keseluruhan"
     }
     rekaps = get_rekap(request, db)
-    # month = "Bulan Ini"
-    month = month_str.get(request.args.get('month'), "Bulan Ini")
-    return render_template('rekap.html', rekap=rekaps['data'], month=month, months=month_str)
+    fil = request.args.get('filter')
+    m = ''
+    y = ''
+    if fil:
+        if fil == 'all':
+            m = 'all'
+        else:
+            x = fil.split('-')
+            print(x)
+            m = x[1]
+            y = x[0]
+    month = month_str.get(m, "Bulan Ini")
+    if fil and fil != 'all':
+        month = month + " " + y
+
+    val = ''
+    if fil:
+        if fil != 'all':
+            val = request.args.get('filter')
+    else:
+        now = datetime.now()
+        val = str(now.year) + "-" + str(now.month)
+    return render_template('rekap.html', rekap=rekaps['data'], month=month, months=month_str, val=val)
 
 
 @app.route('/form_karyawan', methods=["POST", "GET"])

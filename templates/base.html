@@ -85,7 +85,18 @@
         }
         function changeMonth(event, id) {
             event.preventDefault()
-            window.location.replace('/rekap?month=' + id);
+            const date = new Date()
+            const month = ['01','02','03','04','05','06','07','08','09','10','11','12']
+            const date_str = date.getFullYear() + '-' + month[date.getMonth()]
+            if (id === date_str) {
+                window.location.replace('/rekap');
+            } else {
+                window.location.replace('/rekap?filter=' + id);
+            }
+        }
+        function filterAll(event) {
+            event.preventDefault()
+            window.location.replace('/rekap?filter=all');
         }
         function resetMonth(event) {
             event.preventDefault()
