@@ -51,7 +51,6 @@ def rekap():
             m = 'all'
         else:
             x = fil.split('-')
-            print(x)
             m = x[1]
             y = x[0]
     month = month_str.get(m, "Bulan Ini")
