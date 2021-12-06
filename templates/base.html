@@ -91,6 +91,7 @@
             if (id === date_str) {
                 window.location.replace('/rekap');
             } else {
+                if (id === "") window.location.replace('/rekap?filter=all');
                 window.location.replace('/rekap?filter=' + id);
             }
         }
