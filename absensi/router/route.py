@@ -261,32 +261,31 @@ def download_pdf(data, title):
     pdf.cell(page_width, 0, 'Rekap Data Absensi '+title, align='C')
     pdf.ln(10)
 
-    pdf.set_font('Times', 'B', 10)
+    pdf.set_font('Times', '', 10)
     pdf.set_fill_color(222, 222, 222)
 
     pdf.ln(1)
-    th = pdf.font_size + 2
+    th = pdf.font_size + 5
 
-    pdf.cell(17, th, 'No', border=1, align='C', fill=True)
-    pdf.cell(20, th, 'NIK', border=1, align='C', fill=True)
-    pdf.cell(29, th, 'Nama', border=1, align='C', fill=True)
-    pdf.cell(35, th, 'Total Absen Masuk', border=1, align='C', fill=True)
-    pdf.cell(35, th, 'Total Absen Keluar', border=1, align='C', fill=True)
-    pdf.cell(27, th, 'Total Izin', border=1, align='C', fill=True)
-    pdf.cell(27, th, 'Total Lembur', border=1, align='C', fill=True)
-    pdf.ln(th)
+    table_col_names = ("No", "NIK", "Nama", "Total Absen Masuk", "Total Absen Keluar", "Total Izin", "Total Lembur")
+    col_widths = [10, 20, 35, 35, 35, 27, 27]
+    col_align = ["C", "", "", "C", "C", "C", "C"]
 
-    pdf.set_font('Times', '', 10)
+    def render_table_header():
+        pdf.set_font(style="B")  # enabling bold text
+        for idx, val in enumerate(table_col_names):
+            pdf.cell(col_widths[idx], th, val, border=1, align='C', fill=True)
+        pdf.ln(th)
+        pdf.set_font(style="")
+
+    render_table_header()
+
     pdf.set_fill_color(255, 255, 255)
 
     for row in result[0]:
-        pdf.cell(17, th, str(row['rownum']), border=1)
-        pdf.cell(20, th, str(row['nik']), border=1)
-        pdf.cell(29, th, str(row['name']), border=1)
-        pdf.cell(35, th, str(row['total_absen_masuk']), border=1, align='C')
-        pdf.cell(35, th, str(row['total_absen_pulang']), border=1, align='C')
-        pdf.cell(27, th, str(row['total_izin']), border=1, align='C')
-        pdf.cell(27, th, str(row['total_lembur']), border=1, align='C')
+        for idx, datum in enumerate(row):
+            pdf.multi_cell(col_widths[idx], th, str(row[datum]), border=1, ln=3,
+                           max_line_height=pdf.font_size, align=col_align[idx])
         pdf.ln(th)
 
     return Response(pdf.output(dest='S'), mimetype='application/pdf',
