@@ -108,11 +108,13 @@ def get_attendance(requests, dbs):
                " union"
                " SELECT nik, 0 as id, 0 as absen_in, 0 as absen_out, 0 as izin, count(date) as lembur"
                " FROM lembur"
-               " where nik =' " + nik + "'"
+               " where nik = '" + nik + "'"
                " and to_char(date, 'YYYY-MM-DD') = '" + date + "'"
                " group by nik "
                " ) T"
                " group by nik")
+
+    print(sql)
 
     result = dbs.engine.execute(sql)
 
