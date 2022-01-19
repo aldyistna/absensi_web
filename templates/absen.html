@@ -6,16 +6,39 @@
             <h1 style="display:none;">{% block title %} Absensi Karyawan {% endblock %}</h1>
             <div>
                 <div class="box" style="min-height: 400px">
-                    <div class="column is-2 is-offset-10">
-                        <a href="{{ url_for('rekap') }}">
-                            <button class="button is-info">Rekap Data Absen</button>
-                        </a>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 16px">
+                        <div>
+                            <label style="padding-right: 10px">
+                                <input type="month" onchange="changeMonth(event, value, 'absen')" style="padding: 4px 14px;outline: #209cee auto;border-radius: 50px;font-size: 1rem;"
+                                    value="{{ val }}"/>
+                            </label>
+                            <button class="button is-info" style="margin-right: 0.5rem;border-radius: 50px; padding: 0 14px" onclick="filterAll(event, 'absen')">All</button>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('izin') }}" style="margin-left: 0.5rem">
+                                <button class="button is-info">Izin</button>
+                            </a>
+                            <a href="{{ url_for('kegiatan') }}" style="margin-left: 0.5rem">
+                                <button class="button is-info">Kegiatan</button>
+                            </a>
+                            <a href="{{ url_for('lembur') }}" style="margin-left: 0.5rem">
+                                <button class="button is-info">Lembur</button>
+                            </a>
+                            <a href="{{ url_for('rekap') }}" style="margin-left: 0.5rem">
+                                <button class="button is-info">Rekap Data Absen</button>
+                            </a>
+                        </div>
                     </div>
+{#                    <div class="column is-2 is-offset-10">#}
+{#                        <a href="{{ url_for('rekap') }}">#}
+{#                            <button class="button is-info">Rekap Data Absen</button>#}
+{#                        </a>#}
+{#                    </div>#}
                     <div style="margin:10px 0;display: flex; align-items: center; justify-content: center">
                         <table class="table is-bordered is-striped">
                             <thead>
                               <tr>
-                                  <th colspan="10">Data Absensi</th>
+                                  <th colspan="10">Data Absensi {{ month }}</th>
                               </tr>
                               <tr>
                                 <th>No.</th>
