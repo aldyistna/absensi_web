@@ -3,10 +3,10 @@
 {% block content %}
     <div class="hero-body" style="align-items: flex-start">
         <div class="container">
-            <div class="column is-three-fifths is-offset-one-fifth">
+            <div class="column is-8 is-offset-2">
                 <div class="box" style="min-height: 400px">
-                    <h1 style="display:none;">{% block title %} Rekap Data Absen {{ month }}{% endblock %}</h1>
-                    <div style="display: flex; justify-content: space-between">
+                    <h1 style="display:none;">{% block title %} Rekap Data Absen{% endblock %}</h1>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 16px">
                         <a href="{{ url_for('absen') }}">
                             <button class="button is-info">Kembali</button>
                         </a>
@@ -14,9 +14,12 @@
                             {#{% if month != 'Bulan Ini' %}
                             <button class="button is-info is-outlined" style="margin-right: 0.5rem;border-radius: 50px" onclick="resetMonth(event)">Reset</button>
                             {% endif %}#}
-                            <button class="button is-info" style="margin-right: 0.5rem;border-radius: 50px; padding: 0 14px" onclick="filterAll(event)">All</button>
+                            <a href="{{ url_for('download_pdf', data=rekap, title=month) }}">
+                                <button class="button is-info">Report</button>
+                            </a>
+                            <button class="button is-info" style="margin-right: 0.5rem;border-radius: 50px; padding: 0 14px" onclick="filterAll(event, 'rekap')">All</button>
                             <label style="padding-right: 10px">
-                                <input type="month" onchange="changeMonth(event, value)" style="padding: 4px 14px;outline: #209cee auto;border-radius: 50px;font-size: 1rem;"
+                                <input type="month" onchange="changeMonth(event, value, 'rekap')" style="padding: 4px 14px;outline: #209cee auto;border-radius: 50px;font-size: 1rem;"
                                     value="{{ val }}"/>
                             </label>
                         </div>
@@ -33,6 +36,8 @@
                                     <th>Nama</th>
                                     <th>Total Absen Masuk</th>
                                     <th>Total Absen Pulang</th>
+                                    <th>Total Izin</th>
+                                    <th>Total Lembur</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -43,6 +48,8 @@
                                         <td>{{ x['name'] }}</td>
                                         <td>{{ x['total_absen_masuk'] }}</td>
                                         <td>{{ x['total_absen_pulang'] }}</td>
+                                        <td>{{ x['total_izin'] }}</td>
+                                        <td>{{ x['total_lembur'] }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

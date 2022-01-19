@@ -18,7 +18,18 @@ parser.add_argument('location', required=True, help='location parameter is requi
 parser.add_argument('date', required=True, help='date parameter is required')
 parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files', required=True)
 
-def get_absen(request, db):
+
+def get_absen(requests, dbs):
+    sql_where = " WHERE EXTRACT(Month from time_in) = EXTRACT(MONTH from now()) "
+
+    fil = requests.args.get('filter')
+    if fil:
+        if fil == 'all':
+            sql_where = ''
+        else:
+            ym = fil.split("-")
+            sql_where = " WHERE EXTRACT(YEAR from time_in) = " + ym[0] + " AND EXTRACT(MONTH from time_in) = " + ym[1]
+
     sql = text(" SELECT row_number() over (order by time_in::date desc, time_in::time(0)) as rownum, "
                " b.nik as nik, b.name as name, "
                " time_in::date as date_in, time_in::time(0) as time_in,"
@@ -28,29 +39,41 @@ def get_absen(request, db):
                " url_photo_in, url_photo_out "
                " FROM absen a "
                " JOIN karyawan b on a.nik = b.nik "
+               + sql_where +
                " ORDER BY date_in desc, time_in ")
 
-    result = db.engine.execute(sql)
+    result = dbs.engine.execute(sql)
 
-    return result
+    return {
+        'data': [dict(row) for row in result]
+    }
 
 
 def get_rekap(requests, dbs):
     sql_where = " AND EXTRACT(Month from time_in) = EXTRACT(MONTH from now()) "
+    sql_where_izin = " AND EXTRACT(Month from i.date) = EXTRACT(MONTH from now()) "
+    sql_where_lembur = " AND EXTRACT(Month from l.date) = EXTRACT(MONTH from now()) "
 
     fil = requests.args.get('filter')
     if fil:
         if fil == 'all':
             sql_where = ''
+            sql_where_izin = ''
+            sql_where_lembur = ''
         else:
             ym = fil.split("-")
             sql_where = " AND EXTRACT(YEAR from time_in) = " + ym[0] + " AND EXTRACT(MONTH from time_in) = " + ym[1]
+            sql_where_izin = " AND EXTRACT(YEAR from i.date) = " + ym[0] + " AND EXTRACT(MONTH from i.date) = " + ym[1]
+            sql_where_lembur = "AND EXTRACT(YEAR from l.date) = " + ym[0] + " AND EXTRACT(MONTH from l.date) = " + ym[1]
 
     sql = text(" SELECT row_number() over (order by name) as rownum, "
                " a.nik, a.name, count(b.time_in) as total_absen_masuk, "
-               " count(b.time_out) as total_absen_pulang"
+               " count(b.time_out) as total_absen_pulang, "
+               " count(distinct i.date) as total_izin, count(distinct l.date) as total_lembur "
                " FROM karyawan a "
                " LEFT JOIN absen b on a.nik = b.nik " + sql_where +
+               " LEFT JOIN izin i on a.nik = i.nik " + sql_where_izin +
+               " LEFT JOIN lembur l on a.nik = l.nik " + sql_where_lembur +
                " WHERE a.login <> 'WEB' "
                " GROUP BY a.nik, a.name "
                " ORDER BY name ")
@@ -58,6 +81,40 @@ def get_rekap(requests, dbs):
     result = dbs.engine.execute(sql)
 
     # return result
+    return {
+        'data': [dict(row) for row in result]
+    }
+
+
+def get_attendance(requests, dbs):
+    date = requests.args.get('date')
+    nik = requests.args.get('nik')
+
+    sql = text(" select nik, sum(absen_in)::varchar as absen_in, sum(absen_out)::varchar as absen_out,"
+               " sum(izin)::varchar as izin, sum(lembur)::varchar as lembur"
+               " from ("
+               " SELECT nik, count(time_in) as absen_in, count(time_out) as absen_out, 0 as izin, 0 as lembur"
+               " FROM absen"
+               " where nik = " + nik +
+               " and to_char(time_in, 'YYYY-MM-DD') = '" + date + "'"
+               " group by nik "
+               " union"
+               " SELECT nik, 0 as absen_in, 0 as absen_out, count(date) as izin, 0 as lembur"
+               " FROM izin"
+               " where nik = " + nik +
+               " and to_char(date, 'YYYY-MM-DD') = '" + date + "'"
+               " group by nik "
+               " union"
+               " SELECT nik, 0 as absen_in, 0 as absen_out, 0 as izin, count(date) as lembur"
+               " FROM lembur"
+               " where nik = " + nik +
+               " and to_char(date, 'YYYY-MM-DD') = '" + date + "'"
+               " group by nik "
+               " ) T"
+               " group by nik")
+
+    result = dbs.engine.execute(sql)
+
     return {
         'data': [dict(row) for row in result]
     }

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="hero-body" style="align-items: flex-start">
+        <div class="container">
+            <h1 style="display:none;">{% block title %} Kegiatan Karyawan {% endblock %}</h1>
+            <div class="column is-8 is-offset-2">
+                <div class="box" style="min-height: 400px">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 16px">
+                        <a href="{{ url_for('absen') }}">
+                            <button class="button is-info">Kembali</button>
+                        </a>
+                        <div>
+                            <button class="button is-info" style="margin-right: 0.5rem;border-radius: 50px; padding: 0 14px" onclick="filterAll(event, 'kegiatan')">All</button>
+                            <label style="padding-right: 10px">
+                                <input type="month" onchange="changeMonth(event, value, 'kegiatan')" style="padding: 4px 14px;outline: #209cee auto;border-radius: 50px;font-size: 1rem;"
+                                    value="{{ val }}"/>
+                            </label>
+                        </div>
+                    </div>
+                    <div style="margin:10px 0;display: flex; align-items: center; justify-content: center">
+                        <table class="table is-bordered is-striped">
+                            <thead>
+                              <tr>
+                                  <th colspan="10">Kegiatan Karyawan {{ month }}</th>
+                              </tr>
+                              <tr>
+                                <th>No.</th>
+                                <th>NIK</th>
+                                <th>Nama</th>
+                                <th>Tanggal</th>
+                                <th>Waktu</th>
+                                <th>Foto</th>
+                                <th>Keterangan</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for x in keg %}
+                                  <tr>
+                                    <td>{{ x['rownum'] }}</td>
+                                    <td>{{ x['nik'] }}</td>
+                                    <td title="{{ x['name'] }}">{{ x['name'] }}</td>
+                                    <td>{{ x['tanggal'] }}</td>
+                                    <td>{{ x['waktu'] }}</td>
+                                    <td>
+                                        {% if x['url_photo'] %}
+                                            <img src="{{ x['url_photo'] }}" alt="{{ x['keterangan'] }}" style="width:60px;height:60px;">
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td title="{{ x['keterangan'] }}" class="custom-td" style="text-align: start">{{ x['keterangan'] }}</td>
+                                  </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

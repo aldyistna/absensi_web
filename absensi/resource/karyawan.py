@@ -6,11 +6,12 @@ from absensi.model.model import Karyawan, KaryawanSchema
 from app import db
 
 parser = reqparse.RequestParser()
-parser.add_argument('id', required=False, help='nik parameter is required')
+parser.add_argument('id', required=False, help='id parameter is required')
 parser.add_argument('nik', required=True, help='nik parameter is required')
-parser.add_argument('name', required=True, help='nik parameter is required')
-parser.add_argument('jabatan', required=True, help='nik parameter is required')
-parser.add_argument('username', required=True, help='nik parameter is required')
+parser.add_argument('name', required=True, help='name parameter is required')
+parser.add_argument('posisi', required=True, help='posisi parameter is required')
+parser.add_argument('jabatan', required=True, help='jabatan parameter is required')
+parser.add_argument('username', required=True, help='username parameter is required')
 parser.add_argument('password', required=True, help='password parameter is required')
 
 
@@ -24,6 +25,7 @@ class KaryawanResource(Resource):
 
         karyawan.nik = data['nik']
         karyawan.name = data['name']
+        karyawan.posisi = data['posisi']
         karyawan.jabatan = data['jabatan']
         karyawan.username = data['username']
         karyawan.password = data['password']
@@ -56,6 +58,7 @@ def get_karyawan(request, db, id=None):
     where = ''
     if filter_where:
         where = 'and nik ilike \'%' + filter_where + '%\' or name ilike \'%' \
+                + filter_where + '%\' or posisi ilike \'%' \
                 + filter_where + '%\' or jabatan ilike \'%' \
                 + filter_where + '%\' or username ilike \'%' + filter_where + '%\''
 

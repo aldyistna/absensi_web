@@ -83,25 +83,25 @@
               }) :
             null;
         }
-        function changeMonth(event, id) {
+        function changeMonth(event, id, page) {
             event.preventDefault()
             const date = new Date()
             const month = ['01','02','03','04','05','06','07','08','09','10','11','12']
             const date_str = date.getFullYear() + '-' + month[date.getMonth()]
             if (id === date_str) {
-                window.location.replace('/rekap');
+                window.location.replace('/' + page);
             } else {
-                if (id === "") window.location.replace('/rekap?filter=all');
-                window.location.replace('/rekap?filter=' + id);
+                if (id === "") window.location.replace('/' + page +'?filter=all');
+                window.location.replace('/' + page +'?filter=' + id);
             }
         }
-        function filterAll(event) {
+        function filterAll(event, page) {
             event.preventDefault()
-            window.location.replace('/rekap?filter=all');
+            window.location.replace('/' + page +'?filter=all');
         }
-        function resetMonth(event) {
+        function resetMonth(event, page) {
             event.preventDefault()
-            window.location.replace('/rekap');
+            window.location.replace('/' + page);
         }
     </script>
 </html>
