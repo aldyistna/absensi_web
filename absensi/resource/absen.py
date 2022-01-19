@@ -95,19 +95,19 @@ def get_attendance(requests, dbs):
                " from ("
                " SELECT nik, count(time_in) as absen_in, count(time_out) as absen_out, 0 as izin, 0 as lembur"
                " FROM absen"
-               " where nik = " + nik +
+               " where nik = '" + nik + "'"
                " and to_char(time_in, 'YYYY-MM-DD') = '" + date + "'"
                " group by nik "
                " union"
                " SELECT nik, 0 as absen_in, 0 as absen_out, count(date) as izin, 0 as lembur"
                " FROM izin"
-               " where nik = " + nik +
+               " where nik = '" + nik + "'"
                " and to_char(date, 'YYYY-MM-DD') = '" + date + "'"
                " group by nik "
                " union"
                " SELECT nik, 0 as absen_in, 0 as absen_out, 0 as izin, count(date) as lembur"
                " FROM lembur"
-               " where nik = " + nik +
+               " where nik =' " + nik + "'"
                " and to_char(date, 'YYYY-MM-DD') = '" + date + "'"
                " group by nik "
                " ) T"
