@@ -1,4 +1,5 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
+from datetime import datetime, timedelta
 from sqlalchemy import text
 
 from absensi.model.model import Lembur, LemburSchema
@@ -60,3 +61,37 @@ class LemburResource(Resource):
             'message': 'Post data succeeded',
             'status': 'success'
         }
+
+    def get(self, id=None):
+        if id:
+            absen_schema = LemburSchema()
+            absen = Lembur.query.filter_by(id=id).first()
+            return {
+                'data': absen_schema.dump(absen).data,
+                'message': 'Success',
+                'status': 'Success'
+            }
+        else:
+            args = request.args.to_dict()
+            date = args.get('date')
+
+            args.pop('date', None)
+
+            absen = Lembur.query.filter_by(**args)
+
+            if date is not None:
+                date_object = datetime.strptime(date, '%Y-%m-%d')
+                absen = absen.filter(Lembur.date >= date_object)\
+                    .filter(Lembur.date < date_object + timedelta(hours=24))
+
+            absen = absen.order_by(Lembur.date.desc())
+            total_data = absen.count()
+
+            absen_scheme = LemburSchema(many=True)
+
+            output = absen_scheme.dump(absen).data
+
+            return {
+                'totalData': total_data,
+                'data': output
+            }

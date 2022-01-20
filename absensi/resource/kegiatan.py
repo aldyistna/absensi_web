@@ -80,3 +80,37 @@ class KegiatanResource(Resource):
             'message': 'Post data succeeded',
             'status': 'success'
         }
+
+    def get(self, id=None):
+        if id:
+            absen_schema = KegiatanSchema()
+            absen = Kegiatan.query.filter_by(id=id).first()
+            return {
+                'data': absen_schema.dump(absen).data,
+                'message': 'Success',
+                'status': 'Success'
+            }
+        else:
+            args = request.args.to_dict()
+            date = args.get('date')
+
+            args.pop('date', None)
+
+            absen = Kegiatan.query.filter_by(**args)
+
+            if date is not None:
+                date_object = datetime.strptime(date, '%Y-%m-%d')
+                absen = absen.filter(Kegiatan.date >= date_object)\
+                    .filter(Kegiatan.date < date_object + timedelta(hours=24))
+
+            absen = absen.order_by(Kegiatan.date.desc())
+            total_data = absen.count()
+
+            absen_scheme = KegiatanSchema(many=True)
+
+            output = absen_scheme.dump(absen).data
+
+            return {
+                'totalData': total_data,
+                'data': output
+            }
