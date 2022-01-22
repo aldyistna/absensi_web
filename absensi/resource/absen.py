@@ -31,7 +31,7 @@ def get_absen(requests, dbs):
             sql_where = " WHERE EXTRACT(YEAR from time_in) = " + ym[0] + " AND EXTRACT(MONTH from time_in) = " + ym[1]
 
     sql = text(" SELECT row_number() over (order by time_in::date desc, time_in::time(0)) as rownum, "
-               " b.nik as nik, b.name as name, "
+               " b.nik , b.name, b.posisi, b.jabatan, "
                " time_in::date as date_in, time_in::time(0) as time_in,"
                " coalesce(time_out::date::varchar, '-')  as date_out, "
                " coalesce(time_out::time(0)::varchar, '-') as time_out, "

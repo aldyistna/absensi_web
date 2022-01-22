@@ -29,22 +29,19 @@
                             </a>
                         </div>
                     </div>
-{#                    <div class="column is-2 is-offset-10">#}
-{#                        <a href="{{ url_for('rekap') }}">#}
-{#                            <button class="button is-info">Rekap Data Absen</button>#}
-{#                        </a>#}
-{#                    </div>#}
                     <div style="margin:10px 0;display: flex; align-items: center; justify-content: center">
                         <table class="table is-bordered is-striped">
                             <thead>
                               <tr>
-                                  <th colspan="10">Data Absensi {{ month }}</th>
+                                  <th colspan="12">Data Absensi {{ month }}</th>
                               </tr>
                               <tr>
                                 <th>No.</th>
                                 <th>Tanggal</th>
                                 <th>NIK</th>
                                 <th>Nama</th>
+                                <th>Posisi</th>
+                                <th>Jabatan</th>
                                 <th>Jam Masuk</th>
                                 <th>Foto Masuk</th>
                                 <th>Lokasi Masuk</th>
@@ -60,6 +57,8 @@
                                     <td>{{ x['date_in'] }}</td>
                                     <td>{{ x['nik'] }}</td>
                                     <td title="{{ x['name'] }}">{{ x['name'] }}</td>
+                                    <td title="{{ x['posisi'] }}">{{ x['posisi'] }}</td>
+                                    <td title="{{ x['jabatan'] }}">{{ x['jabatan'] }}</td>
                                     <td>{{ x['time_in'] }}</td>
                                     <td>
                                         <img src="{{ x['url_photo_in'] }}" alt="{{ x['name'] }}" style="width:60px;height:60px;">

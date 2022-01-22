@@ -24,7 +24,7 @@ def get_izin(requests, dbs):
             sql_where = " WHERE EXTRACT(YEAR from date) = " + ym[0] + " AND EXTRACT(MONTH from date) = " + ym[1]
 
     sql = text(" SELECT row_number() over (order by date::date desc, date::time(0)) as rownum, "
-               " b.nik as nik, b.name as name, "
+               " b.nik , b.name, b.posisi, b.jabatan, "
                " date::date as tanggal, date::time(0) as waktu, keterangan "
                " FROM izin a "
                " JOIN karyawan b on a.nik = b.nik "
