@@ -11,6 +11,9 @@
                             <button class="button is-info">Kembali</button>
                         </a>
                         <div>
+                            <a href="{{ url_for('download_pdf_lembur', data=lembur, title=month) }}" target="_blank">
+                                <button class="button is-info">Report</button>
+                            </a>
                             <button class="button is-info" style="margin-right: 0.5rem;border-radius: 50px; padding: 0 14px" onclick="filterAll(event, 'lembur')">All</button>
                             <label style="padding-right: 10px">
                                 <input type="month" onchange="changeMonth(event, value, 'lembur')" style="padding: 4px 14px;outline: #209cee auto;border-radius: 50px;font-size: 1rem;"

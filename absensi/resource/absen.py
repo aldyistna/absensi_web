@@ -51,29 +51,19 @@ def get_absen(requests, dbs):
 
 def get_rekap(requests, dbs):
     sql_where = " AND EXTRACT(Month from time_in) = EXTRACT(MONTH from now()) "
-    sql_where_izin = " AND EXTRACT(Month from i.date) = EXTRACT(MONTH from now()) "
-    sql_where_lembur = " AND EXTRACT(Month from l.date) = EXTRACT(MONTH from now()) "
 
     fil = requests.args.get('filter')
     if fil:
         if fil == 'all':
             sql_where = ''
-            sql_where_izin = ''
-            sql_where_lembur = ''
         else:
             ym = fil.split("-")
             sql_where = " AND EXTRACT(YEAR from time_in) = " + ym[0] + " AND EXTRACT(MONTH from time_in) = " + ym[1]
-            sql_where_izin = " AND EXTRACT(YEAR from i.date) = " + ym[0] + " AND EXTRACT(MONTH from i.date) = " + ym[1]
-            sql_where_lembur = "AND EXTRACT(YEAR from l.date) = " + ym[0] + " AND EXTRACT(MONTH from l.date) = " + ym[1]
 
     sql = text(" SELECT row_number() over (order by name) as rownum, "
-               " a.nik, a.name, count(b.time_in) as total_absen_masuk, "
-               " count(b.time_out) as total_absen_pulang, "
-               " count(distinct i.date) as total_izin, count(distinct l.date) as total_lembur "
+               " a.nik, a.name, count(b.time_in) as total_absen_masuk "
                " FROM karyawan a "
                " LEFT JOIN absen b on a.nik = b.nik " + sql_where +
-               " LEFT JOIN izin i on a.nik = i.nik " + sql_where_izin +
-               " LEFT JOIN lembur l on a.nik = l.nik " + sql_where_lembur +
                " WHERE a.login <> 'WEB' "
                " GROUP BY a.nik, a.name "
                " ORDER BY name ")

@@ -267,9 +267,9 @@ def download_pdf(data, title):
     pdf.ln(1)
     th = pdf.font_size + 5
 
-    table_col_names = ("No", "NIK", "Nama", "Total Absen Masuk", "Total Absen Keluar", "Total Izin", "Total Lembur")
-    col_widths = [10, 20, 35, 35, 35, 27, 27]
-    col_align = ["C", "", "", "C", "C", "C", "C"]
+    table_col_names = ("No", "NIK", "Nama", "Total Absen Masuk")
+    col_widths = [20, 49, 70, 50]
+    col_align = ["C", "", "", "C"]
 
     def render_table_header():
         pdf.set_font(style="B")  # enabling bold text
@@ -290,6 +290,98 @@ def download_pdf(data, title):
 
     return Response(pdf.output(dest='S'), mimetype='application/pdf',
                     headers={'Content-Disposition': 'attachment;filename=rekap_karyawan.pdf'})
+
+
+@app.route('/download_pdf_izin/<data>/<title>')
+@login_required
+def download_pdf_izin(data, title):
+    data = [data]
+    result = [json.loads(idx.replace("'", '"')) for idx in data]
+
+    pdf = PDF()
+    pdf.add_page()
+
+    page_width = pdf.w - 2 * pdf.l_margin
+
+    pdf.set_font('Times', 'B', 14)
+    pdf.cell(page_width, 0, 'Rekap Izin '+title, align='C')
+    pdf.ln(10)
+
+    pdf.set_font('Times', '', 10)
+    pdf.set_fill_color(222, 222, 222)
+
+    pdf.ln(1)
+    th = pdf.font_size + 5
+
+    table_col_names = ("No", "NIK", "Nama", "Posisi", "Jabatan", "Tanggal", "Waktu", "Keterangan")
+    col_widths = [10, 17, 35, 25, 25, 20, 20, 37]
+    col_align = ["C", "", "", "", "", "C", "C", "L"]
+
+    def render_table_header():
+        pdf.set_font(style="B")  # enabling bold text
+        for idx, val in enumerate(table_col_names):
+            pdf.cell(col_widths[idx], th, val, border=1, align='C', fill=True)
+        pdf.ln(th)
+        pdf.set_font(style="")
+
+    render_table_header()
+
+    pdf.set_fill_color(255, 255, 255)
+
+    for row in result[0]:
+        for idx, datum in enumerate(row):
+            pdf.multi_cell(col_widths[idx], th, str(row[datum]), border=1, ln=3,
+                           max_line_height=pdf.font_size, align=col_align[idx])
+        pdf.ln(th)
+
+    return Response(pdf.output(dest='S'), mimetype='application/pdf',
+                    headers={'Content-Disposition': 'attachment;filename=rekap_karyawan_izin.pdf'})
+
+
+@app.route('/download_pdf_lembur/<data>/<title>')
+@login_required
+def download_pdf_lembur(data, title):
+    data = [data]
+    result = [json.loads(idx.replace("'", '"')) for idx in data]
+
+    pdf = PDF()
+    pdf.add_page()
+
+    page_width = pdf.w - 2 * pdf.l_margin
+
+    pdf.set_font('Times', 'B', 14)
+    pdf.cell(page_width, 0, 'Rekap Lembur '+title, align='C')
+    pdf.ln(10)
+
+    pdf.set_font('Times', '', 10)
+    pdf.set_fill_color(222, 222, 222)
+
+    pdf.ln(1)
+    th = pdf.font_size + 5
+
+    table_col_names = ("No", "NIK", "Nama", "Posisi", "Jabatan", "Tanggal", "Waktu", "Keterangan")
+    col_widths = [10, 17, 35, 25, 25, 20, 20, 37]
+    col_align = ["C", "", "", "", "", "C", "C", "L"]
+
+    def render_table_header():
+        pdf.set_font(style="B")  # enabling bold text
+        for idx, val in enumerate(table_col_names):
+            pdf.cell(col_widths[idx], th, val, border=1, align='C', fill=True)
+        pdf.ln(th)
+        pdf.set_font(style="")
+
+    render_table_header()
+
+    pdf.set_fill_color(255, 255, 255)
+
+    for row in result[0]:
+        for idx, datum in enumerate(row):
+            pdf.multi_cell(col_widths[idx], th, str(row[datum]), border=1, ln=3,
+                           max_line_height=pdf.font_size, align=col_align[idx])
+        pdf.ln(th)
+
+    return Response(pdf.output(dest='S'), mimetype='application/pdf',
+                    headers={'Content-Disposition': 'attachment;filename=rekap_karyawan_lembur.pdf'})
 
 
 @app.route('/form_karyawan', methods=["POST", "GET"])

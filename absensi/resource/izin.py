@@ -25,7 +25,8 @@ def get_izin(requests, dbs):
 
     sql = text(" SELECT row_number() over (order by date::date desc, date::time(0)) as rownum, "
                " b.nik , b.name, b.posisi, b.jabatan, "
-               " date::date as tanggal, date::time(0) as waktu, keterangan "
+               " to_char(date::date, 'YYYY-MM-DD') as tanggal, "
+               " to_char(date::time(0), 'HH:mm:ss') as waktu, keterangan "
                " FROM izin a "
                " JOIN karyawan b on a.nik = b.nik "
                + sql_where +
