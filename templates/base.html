@@ -101,11 +101,15 @@
         }
         function filterDate(event, page) {
             event.preventDefault()
-            const start = new Date(document.querySelector('#dateStart').value);
-            const end = new Date(document.querySelector('#dateEnd').value);
-            const startParam = padTo2Digits(start.getDate()) + "/" + padTo2Digits(start.getMonth()+1) + "/" + start.getFullYear()
-            const endParam = padTo2Digits(end.getDate()) + "/" + padTo2Digits(end.getMonth()+1) + "/" + end.getFullYear()
-            window.location.replace('/' + page +'?filter=' + startParam + '-' + endParam);
+            if (document.querySelector('#dateStart').value && document.querySelector('#dateEnd').value) {
+                const start = new Date(document.querySelector('#dateStart').value);
+                const end = new Date(document.querySelector('#dateEnd').value);
+                const startParam = padTo2Digits(start.getDate()) + "/" + padTo2Digits(start.getMonth()+1) + "/" + start.getFullYear()
+                const endParam = padTo2Digits(end.getDate()) + "/" + padTo2Digits(end.getMonth()+1) + "/" + end.getFullYear()
+                window.location.replace('/' + page +'?filter=' + startParam + '-' + endParam);
+            } else {
+                alert("Silahkan pilih tanggal")
+            }
         }
         function resetMonth(event, page) {
             event.preventDefault()
