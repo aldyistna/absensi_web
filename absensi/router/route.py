@@ -2,8 +2,9 @@ from app import api, app, db
 from flask import render_template, Blueprint, flash, redirect, url_for
 from flask import request, Response
 from flask import jsonify
+from flask_csv import send_csv
 from flask_login import login_required
-from datetime import datetime
+from datetime import datetime, timedelta
 from fpdf import FPDF
 
 from absensi.resource.absen import get_absen, get_rekap, get_attendance, AbsenResource
@@ -15,6 +16,7 @@ from absensi.resource.karyawan import KaryawanResource, get_karyawan
 from absensi.model.model import Karyawan
 
 import json
+import ast
 
 
 main = Blueprint('main', __name__)
@@ -35,216 +37,162 @@ def get_att():
 @app.route('/absen')
 @login_required
 def absen():
-    month_str = {
-        "01": "Bulan Januari",
-        "02": "Bulan Februari",
-        "03": "Bulan Maret",
-        "04": "Bulan April",
-        "05": "Bulan Mei",
-        "06": "Bulan Juni",
-        "07": "Bulan Juli",
-        "08": "Bulan Agustus",
-        "09": "Bulan September",
-        "10": "Bulan Oktober",
-        "11": "Bulan November",
-        "12": "Bulan Desember",
-        "all": "Keseluruhan"
-    }
     absens = get_absen(request, db)
     fil = request.args.get('filter')
-    m = ''
-    y = ''
-    if fil:
-        if fil == 'all':
-            m = 'all'
-        else:
-            x = fil.split('-')
-            m = x[1]
-            y = x[0]
-    month = month_str.get(m, "Bulan Ini")
-    if fil and fil != 'all':
-        month = month + " " + y
 
-    val = ''
+    start = ''
+    end = ''
     if fil:
         if fil != 'all':
-            val = request.args.get('filter')
+            x = fil.split('-')
+            start = datetime.strptime(x[0], '%d/%m/%Y')
+            end = datetime.strptime(x[1], '%d/%m/%Y')
+
+            start = start.date()
+            end = end.date()
+            val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+        else:
+            val = "Keseluruhan"
     else:
-        now = datetime.now()
-        val = str(now.year) + "-" + str(now.month)
-    return render_template('absen.html', absen=absens['data'], month=month, months=month_str, val=val)
+        start = datetime.now() - timedelta(days=30)
+        end = datetime.now()
+
+        start = start.date()
+        end = end.date()
+        val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+    return render_template('absen.html', absen=absens['data'], month=val, start=start, end=end)
 
 
 @app.route('/izin')
 @login_required
 def izin():
-    month_str = {
-        "01": "Bulan Januari",
-        "02": "Bulan Februari",
-        "03": "Bulan Maret",
-        "04": "Bulan April",
-        "05": "Bulan Mei",
-        "06": "Bulan Juni",
-        "07": "Bulan Juli",
-        "08": "Bulan Agustus",
-        "09": "Bulan September",
-        "10": "Bulan Oktober",
-        "11": "Bulan November",
-        "12": "Bulan Desember",
-        "all": "Keseluruhan"
-    }
     izins = get_izin(request, db)
     fil = request.args.get('filter')
-    m = ''
-    y = ''
-    if fil:
-        if fil == 'all':
-            m = 'all'
-        else:
-            x = fil.split('-')
-            m = x[1]
-            y = x[0]
-    month = month_str.get(m, "Bulan Ini")
-    if fil and fil != 'all':
-        month = month + " " + y
 
-    val = ''
+    start = ''
+    end = ''
     if fil:
         if fil != 'all':
-            val = request.args.get('filter')
+            x = fil.split('-')
+            start = datetime.strptime(x[0], '%d/%m/%Y')
+            end = datetime.strptime(x[1], '%d/%m/%Y')
+
+            start = start.date()
+            end = end.date()
+            val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+        else:
+            val = "Keseluruhan"
     else:
-        now = datetime.now()
-        val = str(now.year) + "-" + str(now.month)
-    return render_template('izin.html', izin=izins['data'], month=month, months=month_str, val=val)
+        start = datetime.now() - timedelta(days=30)
+        end = datetime.now()
+
+        start = start.date()
+        end = end.date()
+        val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+    return render_template('izin.html', izin=izins['data'], month=val, start=start, end=end)
 
 
 @app.route('/kegiatan')
 @login_required
 def kegiatan():
-    month_str = {
-        "01": "Bulan Januari",
-        "02": "Bulan Februari",
-        "03": "Bulan Maret",
-        "04": "Bulan April",
-        "05": "Bulan Mei",
-        "06": "Bulan Juni",
-        "07": "Bulan Juli",
-        "08": "Bulan Agustus",
-        "09": "Bulan September",
-        "10": "Bulan Oktober",
-        "11": "Bulan November",
-        "12": "Bulan Desember",
-        "all": "Keseluruhan"
-    }
     kegiatans = get_kegiatan(request, db)
     fil = request.args.get('filter')
-    m = ''
-    y = ''
-    if fil:
-        if fil == 'all':
-            m = 'all'
-        else:
-            x = fil.split('-')
-            m = x[1]
-            y = x[0]
-    month = month_str.get(m, "Bulan Ini")
-    if fil and fil != 'all':
-        month = month + " " + y
 
-    val = ''
+    start = ''
+    end = ''
     if fil:
         if fil != 'all':
-            val = request.args.get('filter')
+            x = fil.split('-')
+            start = datetime.strptime(x[0], '%d/%m/%Y')
+            end = datetime.strptime(x[1], '%d/%m/%Y')
+
+            start = start.date()
+            end = end.date()
+            val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+        else:
+            val = "Keseluruhan"
     else:
-        now = datetime.now()
-        val = str(now.year) + "-" + str(now.month)
-    return render_template('kegiatan.html', keg=kegiatans['data'], month=month, months=month_str, val=val)
+        start = datetime.now() - timedelta(days=30)
+        end = datetime.now()
+
+        start = start.date()
+        end = end.date()
+        val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+    return render_template('kegiatan.html', keg=kegiatans['data'], month=val, start=start, end=end)
 
 
 @app.route('/lembur')
 @login_required
 def lembur():
-    month_str = {
-        "01": "Bulan Januari",
-        "02": "Bulan Februari",
-        "03": "Bulan Maret",
-        "04": "Bulan April",
-        "05": "Bulan Mei",
-        "06": "Bulan Juni",
-        "07": "Bulan Juli",
-        "08": "Bulan Agustus",
-        "09": "Bulan September",
-        "10": "Bulan Oktober",
-        "11": "Bulan November",
-        "12": "Bulan Desember",
-        "all": "Keseluruhan"
-    }
     lemburs = get_lembur(request, db)
     fil = request.args.get('filter')
-    m = ''
-    y = ''
-    if fil:
-        if fil == 'all':
-            m = 'all'
-        else:
-            x = fil.split('-')
-            m = x[1]
-            y = x[0]
-    month = month_str.get(m, "Bulan Ini")
-    if fil and fil != 'all':
-        month = month + " " + y
 
-    val = ''
+    start = ''
+    end = ''
     if fil:
         if fil != 'all':
-            val = request.args.get('filter')
+            x = fil.split('-')
+            start = datetime.strptime(x[0], '%d/%m/%Y')
+            end = datetime.strptime(x[1], '%d/%m/%Y')
+
+            start = start.date()
+            end = end.date()
+            val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+        else:
+            val = "Keseluruhan"
     else:
-        now = datetime.now()
-        val = str(now.year) + "-" + str(now.month)
-    return render_template('lembur.html', lembur=lemburs['data'], month=month, months=month_str, val=val)
+        start = datetime.now() - timedelta(days=30)
+        end = datetime.now()
+
+        start = start.date()
+        end = end.date()
+        val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+    return render_template('lembur.html', lembur=lemburs['data'], month=val, start=start, end=end)
 
 
 @app.route('/rekap')
 @login_required
 def rekap():
-    month_str = {
-        "01": "Bulan Januari",
-        "02": "Bulan Februari",
-        "03": "Bulan Maret",
-        "04": "Bulan April",
-        "05": "Bulan Mei",
-        "06": "Bulan Juni",
-        "07": "Bulan Juli",
-        "08": "Bulan Agustus",
-        "09": "Bulan September",
-        "10": "Bulan Oktober",
-        "11": "Bulan November",
-        "12": "Bulan Desember",
-        "all": "Keseluruhan"
-    }
-    rekaps = get_rekap(request, db)
     fil = request.args.get('filter')
-    m = ''
-    y = ''
-    if fil:
-        if fil == 'all':
-            m = 'all'
-        else:
-            x = fil.split('-')
-            m = x[1]
-            y = x[0]
-    month = month_str.get(m, "Bulan Ini")
-    if fil and fil != 'all':
-        month = month + " " + y
+    rekaps = get_rekap(request, db)
 
-    val = ''
+    start = ''
+    end = ''
     if fil:
         if fil != 'all':
-            val = request.args.get('filter')
+            x = fil.split('-')
+            start = datetime.strptime(x[0], '%d/%m/%Y')
+            end = datetime.strptime(x[1], '%d/%m/%Y')
+
+            start = start.date()
+            end = end.date()
+            val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+        else:
+            val = "Keseluruhan"
     else:
-        now = datetime.now()
-        val = str(now.year) + "-" + str(now.month)
-    return render_template('rekap.html', rekap=rekaps['data'], month=month, months=month_str, val=val)
+        start = datetime.now() - timedelta(days=30)
+        end = datetime.now()
+
+        start = start.date()
+        end = end.date()
+        val = f"{start.strftime('%d %B %Y')} - {end.strftime('%d %B %Y')}"
+
+    return render_template('rekap.html', rekap=rekaps['data'], month=val, start=start, end=end)
+
+
+@app.route('/download_csv/<data>')
+@login_required
+def download_csv(data):
+    data = ast.literal_eval(data)
+    table_col_names = ["No", "NIK", "Nama", "Total Absen Masuk"]
+
+    for row in data:
+        row['No'] = row.pop('rownum')
+        row['NIK'] = row.pop('nik')
+        row['Nama'] = row.pop('name')
+        row['Total Absen Masuk'] = row.pop('total_absen_masuk')
+
+    return send_csv(data, filename="rekap_karyawan.csv", fields=table_col_names, delimiter=";")
 
 
 @app.route('/download_pdf/<data>/<title>')
@@ -292,6 +240,26 @@ def download_pdf(data, title):
                     headers={'Content-Disposition': 'attachment;filename=rekap_karyawan.pdf'})
 
 
+@app.route('/download_csv_izin/<data>')
+@login_required
+def download_csv_izin(data):
+    data = ast.literal_eval(data)
+    # table_col_names = ["rownum", "nik", "name", "posisi", "jabatan", "tanggal", "waktu", "keterangan"]
+    table_col_names = ["No", "NIK", "Nama", "Posisi", "Jabatan", "Tanggal", "Waktu", "Keterangan"]
+
+    for row in data:
+        row['No'] = row.pop('rownum')
+        row['NIK'] = row.pop('nik')
+        row['Nama'] = row.pop('name')
+        row['Posisi'] = row.pop('posisi')
+        row['Jabatan'] = row.pop('jabatan')
+        row['Tanggal'] = row.pop('tanggal')
+        row['Waktu'] = row.pop('waktu')
+        row['Keterangan'] = row.pop('keterangan')
+
+    return send_csv(data, filename="rekap_karyawan_izin.csv", fields=table_col_names, delimiter=";")
+
+
 @app.route('/download_pdf_izin/<data>/<title>')
 @login_required
 def download_pdf_izin(data, title):
@@ -336,6 +304,26 @@ def download_pdf_izin(data, title):
 
     return Response(pdf.output(dest='S'), mimetype='application/pdf',
                     headers={'Content-Disposition': 'attachment;filename=rekap_karyawan_izin.pdf'})
+
+
+@app.route('/download_csv_lembur/<data>')
+@login_required
+def download_csv_lembur(data):
+    data = ast.literal_eval(data)
+    # table_col_names = ["rownum", "nik", "name", "posisi", "jabatan", "tanggal", "waktu", "keterangan"]
+    table_col_names = ["No", "NIK", "Nama", "Posisi", "Jabatan", "Tanggal", "Waktu", "Keterangan"]
+
+    for row in data:
+        row['No'] = row.pop('rownum')
+        row['NIK'] = row.pop('nik')
+        row['Nama'] = row.pop('name')
+        row['Posisi'] = row.pop('posisi')
+        row['Jabatan'] = row.pop('jabatan')
+        row['Tanggal'] = row.pop('tanggal')
+        row['Waktu'] = row.pop('waktu')
+        row['Keterangan'] = row.pop('keterangan')
+
+    return send_csv(data, filename="rekap_karyawan_lembur.csv", fields=table_col_names, delimiter=";")
 
 
 @app.route('/download_pdf_lembur/<data>/<title>')

@@ -19,7 +19,8 @@ parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='
 
 
 def get_kegiatan(requests, dbs):
-    sql_where = " WHERE EXTRACT(Month from date) = EXTRACT(MONTH from now()) "
+    sql_where = " WHERE date between date_trunc('day', now() - INTERVAL '30 days')" \
+                " and date_trunc('day', now()) + interval '1 day' - interval '1 second' "
 
     fil = requests.args.get('filter')
     if fil:
@@ -27,10 +28,12 @@ def get_kegiatan(requests, dbs):
             sql_where = ''
         else:
             ym = fil.split("-")
-            sql_where = " WHERE EXTRACT(YEAR from date) = " + ym[0] + " AND EXTRACT(MONTH from date) = " + ym[1]
+            sql_where = " WHERE date between " \
+                        "to_timestamp('" + ym[0] + "', 'DD/MM/YYYY') and to_timestamp('" + ym[1] + "', 'DD/MM/YYYY') "
 
     sql = text(" SELECT row_number() over (order by date::date desc, date::time(0)) as rownum, "
-               " b.nik , b.name, b.posisi, b.jabatan, "
+               " COALESCE(b.nik, '-') as nik , COALESCE(b.name, '-') as name,"
+               " COALESCE(b.posisi, '-') as posisi, COALESCE(b.jabatan, '-') as jabatan, "
                " to_char(date::date, 'YYYY-MM-DD') as tanggal, "
                " to_char(date::time(0), 'HH:mm:ss') as waktu, keterangan, url_photo "
                " FROM kegiatan a "

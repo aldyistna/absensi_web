@@ -20,7 +20,8 @@ parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='
 
 
 def get_absen(requests, dbs):
-    sql_where = " WHERE EXTRACT(Month from time_in) = EXTRACT(MONTH from now()) "
+    sql_where = " AND time_in between date_trunc('day', now() - INTERVAL '30 days')" \
+                " and date_trunc('day', now()) + interval '1 day' - interval '1 second' "
 
     fil = requests.args.get('filter')
     if fil:
@@ -28,10 +29,12 @@ def get_absen(requests, dbs):
             sql_where = ''
         else:
             ym = fil.split("-")
-            sql_where = " WHERE EXTRACT(YEAR from time_in) = " + ym[0] + " AND EXTRACT(MONTH from time_in) = " + ym[1]
+            sql_where = " AND time_in between " \
+                        "to_timestamp('" + ym[0] + "', 'DD/MM/YYYY') and to_timestamp('" + ym[1] + "', 'DD/MM/YYYY') "
 
     sql = text(" SELECT row_number() over (order by time_in::date desc, time_in::time(0)) as rownum, "
-               " b.nik , b.name, b.posisi, b.jabatan, "
+               " COALESCE(b.nik, '-') as nik , COALESCE(b.name, '-') as name,"
+               " COALESCE(b.posisi, '-') as posisi, COALESCE(b.jabatan, '-') as jabatan, "
                " time_in::date as date_in, time_in::time(0) as time_in,"
                " coalesce(time_out::date::varchar, '-')  as date_out, "
                " coalesce(time_out::time(0)::varchar, '-') as time_out, "
@@ -50,7 +53,8 @@ def get_absen(requests, dbs):
 
 
 def get_rekap(requests, dbs):
-    sql_where = " AND EXTRACT(Month from time_in) = EXTRACT(MONTH from now()) "
+    sql_where = " AND time_in between date_trunc('day', now() - INTERVAL '30 days')" \
+                " and date_trunc('day', now()) + interval '1 day' - interval '1 second' "
 
     fil = requests.args.get('filter')
     if fil:
@@ -58,10 +62,12 @@ def get_rekap(requests, dbs):
             sql_where = ''
         else:
             ym = fil.split("-")
-            sql_where = " AND EXTRACT(YEAR from time_in) = " + ym[0] + " AND EXTRACT(MONTH from time_in) = " + ym[1]
+            sql_where = " AND time_in between " \
+                        "to_timestamp('" + ym[0] + "', 'DD/MM/YYYY') and to_timestamp('" + ym[1] + "', 'DD/MM/YYYY') "
 
     sql = text(" SELECT row_number() over (order by name) as rownum, "
-               " a.nik, a.name, count(b.time_in) as total_absen_masuk "
+               " COALESCE(a.nik, '-') as nik, COALESCE(a.name, '-') as name,"
+               " count(b.time_in) as total_absen_masuk "
                " FROM karyawan a "
                " LEFT JOIN absen b on a.nik = b.nik " + sql_where +
                " WHERE a.login <> 'WEB' "

@@ -12,13 +12,19 @@
                         </a>
                         <div>
                             <a href="{{ url_for('download_pdf_izin', data=izin, title=month) }}" target="_blank">
-                                <button class="button is-info">Report</button>
+                                <button class="button is-info">Report PDF</button>
                             </a>
-                            <button class="button is-info" style="margin-right: 0.5rem;border-radius: 50px; padding: 0 14px" onclick="filterAll(event, 'izin')">All</button>
-                            <label style="padding-right: 10px">
-                                <input type="month" onchange="changeMonth(event, value, 'izin')" style="padding: 4px 14px;outline: #209cee auto;border-radius: 50px;font-size: 1rem;"
-                                    value="{{ val }}"/>
+                            <a href="{{ url_for('download_csv_izin', data=izin) }}" target="_blank">
+                                <button class="button is-info">Report CSV</button>
+                            </a>
+                            <label style="padding-left: 10px">
+                                <input id="dateStart" type="date" style="padding: 4px 14px;outline: #209cee auto;border-radius: 50px;font-size: 1rem;"
+                                    value="{{ start }}"/>
+                                <input id="dateEnd" type="date" style="padding: 4px 14px;outline: #209cee auto;border-radius: 50px;font-size: 1rem;"
+                                    value="{{ end }}"/>
+                                <button class="button is-info" style="border-radius: 50px; padding: 0 14px" onclick="filterDate(event, 'izin')">Filter</button>
                             </label>
+                            <button class="button is-info" style="margin-right: 0.5rem;border-radius: 50px; padding: 0 14px" onclick="filterAll(event, 'izin')">All</button>
                         </div>
                     </div>
                     <div style="margin:10px 0;display: flex; align-items: center; justify-content: center">
